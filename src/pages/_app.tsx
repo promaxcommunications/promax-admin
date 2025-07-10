@@ -16,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Aside />
       <Header />
 
-      <div className="pt-[108px] pl-[340px] pr-5 w-full min-h-screen overflow-y-auto">
+      <div className="py-[108px] pl-[340px] pr-5 w-full min-h-screen">
         <Component {...pageProps} />
       </div>
     </div>

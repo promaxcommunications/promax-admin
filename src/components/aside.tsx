@@ -3,8 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const isActive = true;
-
 const Aside = () => {
   const router = useRouter();
   const currentPath = router.pathname;
@@ -20,7 +18,7 @@ const Aside = () => {
         className="w-auto h-[60px] mx-auto"
       />
 
-      <div className="mt-20 flex flex-col gap-2">
+      <div className="mt-20 flex flex-col gap-2 h-full pb-40 overflow-y-scroll">
         {navLinks.map((link, index) => (
           <Link
             href={"/" + link.href}
@@ -32,7 +30,7 @@ const Aside = () => {
                 : "text-black")
             }
           >
-            <link.icon isActive={isActive} />
+            <link.icon isActive={currentPath.includes(link.href)} />
             {link.title}
           </Link>
         ))}

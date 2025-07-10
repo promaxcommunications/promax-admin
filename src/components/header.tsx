@@ -1,7 +1,7 @@
 const Header = () => {
   return (
     <header className="h-[88px] fixed left-[320px] top-0 right-0 px-5 bg-white flex justify-between items-center">
-      <h2 className="text-2xl font-medium">Overview</h2>
+      <h2 className="text-2xl font-semibold capitalize">Admin Dashboard</h2>
 
       <div className="flex items-center gap-4">
         <span className="w-7 h-7 rounded-full grid place-content-center text-sm font-bold bg-[#96D4FF]">

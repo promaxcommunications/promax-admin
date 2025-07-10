@@ -4,6 +4,8 @@ import {
   TransactionIconAlt,
   UserAltIcon,
 } from "@/components/icons";
+import Status from "@/components/status";
+import { transactions } from "@/utils";
 
 const Page = () => {
   return (
@@ -70,6 +72,61 @@ const Page = () => {
             View all <ArrowRightIcon color="#32CD32" />
           </button>
         </article>
+      </div>
+
+      <div className="mt-10 bg-white text-[#2B2B2B] text-sm">
+        <div className="flex justify-between items-center px-3 py-7">
+          <h3 className="text-lg font-black">Bill payment Transaction</h3>
+          <h5 className=" font-bold text-[#0068B3]">Total User</h5>
+        </div>
+
+        <div className="px-3 bg-[#E8EBEC] py-5 flex justify-between sticky top-[88px]">
+          <span className="flex-[1] font-bold text-center">ID</span>
+          <span className="flex-[2] font-bold text-center">CUSTOMER</span>
+          <span className="flex-[1] font-bold text-center">SERVICE</span>
+          <span className="flex-[1] font-bold text-center">AMOUNT</span>
+          <span className="flex-[1] font-bold text-center">STATUS</span>
+          <span className="flex-[1] font-bold text-center">DATE</span>
+        </div>
+
+        <div className="divide-y divide-gray-300">
+          {transactions.map((data, index) => (
+            <ListBox data={data} key={index} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ListBox = ({ data }: { data: (typeof transactions)[0] }) => {
+  const {
+    amount,
+    date,
+    email,
+    firstName,
+    lastName,
+    service,
+    status,
+    time,
+    id,
+  } = data;
+
+  return (
+    <div className="px-3 py-5 flex justify-between items-center">
+      <span className="flex-[1] text-center font-bold">{id}</span>
+      <div className="flex-[2] text-center">
+        <h4 className="font-bold ">
+          {firstName} {lastName}
+        </h4>
+        <h5 className="flex-[1] text-center">{email}</h5>
+      </div>
+      <span className="capitalize flex-[1] text-center">{service}</span>
+      <span className="flex-[1] text-center">{amount}</span>
+      <Status value={status} />
+      <div className="flex-[1] text-center">
+        <h4 className="">{date}</h4>
+        <span className="text-[#A6A6A6]">{time}</span>
       </div>
     </div>
   );
