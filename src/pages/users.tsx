@@ -3,14 +3,53 @@ import { SearchIcon } from "@/components/icons";
 import Status from "@/components/status";
 import UserModal from "@/components/userModal";
 import { formatToNaira, parseDateTime } from "@/utils";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-const filters = ["all", "verified", "unverified", "deactivated"];
+const filters = ["all", "verified", "unverified"] as const;
 
 const Page = () => {
-  const { users, isLoading } = useGetUsers();
-  const [userSelected, setUserSelected] = useState(null as User | null);
-  const [filterSelected, setFilterSelected] = useState("all");
+  const {
+    users,
+    isLoading,
+    page,
+    totalPages,
+    totalCount,
+    limit,
+    setPage,
+    filter,
+    setFilter,
+    sort,
+    setSort,
+    sortOrder,
+    setSortOrder,
+    search,
+    setSearch,
+  } = useGetUsers();
+
+  const [userSelected, setUserSelected] = useState<User | null>(null);
+
+  // Local search input + debounce
+  const [searchTerm, setSearchTerm] = useState<string>(search || "");
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Update hook search and reset to first page
+      setPage(1);
+      setSearch(searchTerm);
+    }, 450);
+    return () => clearTimeout(timer);
+  }, [searchTerm, setSearch, setPage]);
+
+  // When filter or sort is changed, reset page to 1 (UI-level)
+  const handleFilterChange = (f: typeof filter) => {
+    setPage(1);
+    setFilter(f);
+  };
+
+  const handleSortChange = (val: string) => {
+    // val corresponds to UI select values (date, balance, role, name, referralPoints, lastActive)
+    setPage(1);
+    setSort(val as any);
+  };
 
   return (
     <div style={{ pointerEvents: isLoading ? "none" : "auto" }}>
@@ -23,54 +62,72 @@ const Page = () => {
         <div className="w-[390px] bg-white py-3 h-fit px-4 flex items-center gap-2.5 border border-[#E6E6E6] rounded">
           <SearchIcon />
           <input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             type="search"
             className="outline-none bg-transparent text-sm font-medium w-full"
-            placeholder="Search by ID, Name, Email, Phone number"
+            placeholder="Search by name or email"
           />
         </div>
       </div>
 
       <div className="flex justify-between">
         <div className="flex mt-10 gap-4">
-          {filters.map((filter, index) => (
+          {filters.map((f) => (
             <button
-              onClick={() => setFilterSelected(filter)}
-              key={index}
+              onClick={() => handleFilterChange(f as any)}
+              key={f}
               className={`px-6 py-2 cursor-pointer font-semibold rounded capitalize ${
-                filterSelected === filter
-                  ? "bg-[#173842] text-white"
-                  : "bg-white"
+                filter === f ? "bg-[#173842] text-white" : "bg-white"
               }`}
             >
-              {filter}
+              {f}
             </button>
           ))}
         </div>
 
         <div className="flex items-center gap-4">
           <h4 className="text-sm">Sort by:</h4>
-          <div className="bg-white border border-[#E6E6E6] px-4 py-2">
+          <div className="bg-white border border-[#E6E6E6] px-4 py-2 flex items-center gap-3">
             <select
               name="sort"
               id="sort"
+              value={sort}
+              onChange={(e) => handleSortChange(e.target.value)}
               className="bg-transparent pr-2 text-sm"
             >
-              <option value="date">Date created</option>
-              <option value="date">Date created</option>
-              <option value="date">Date created</option>
-              <option value="date">Date created</option>
+              <option value="date">Date joined</option>
+              <option value="balance">Highest Balance</option>
+              <option value="role">Role</option>
+              <option value="referralPoints">Referral Points</option>
+              <option value="lastActive">Last Active</option>
             </select>
+
+            {/* Order toggle */}
+            <button
+              onClick={() => {
+                setPage(1);
+                setSortOrder(sortOrder === "desc" ? "asc" : "desc");
+              }}
+              className="px-3 py-1 border rounded text-sm"
+              title="Toggle sort order"
+            >
+              {sortOrder === "desc" ? "Desc" : "Asc"}
+            </button>
           </div>
         </div>
       </div>
 
+      {/* User list header */}
       <div className="mt-10 bg-white text-[#2B2B2B] text-sm">
         <div className="flex justify-between items-center px-3 py-7">
           <h3 className="text-lg font-black">Users</h3>
+          <p className="text-sm text-gray-600">
+            Showing {users.length} of {totalCount} users
+          </p>
         </div>
 
         <div className="px-3 bg-[#E8EBEC] py-5 flex justify-between sticky top-[88px]">
-          {/* <span className="flex-[1] font-bold text-center">ID</span> */}
           <span className="flex-[1.5] font-bold text-center">CUSTOMER</span>
           <span className="flex-[1] font-bold text-center">PHONE NUMBER</span>
           <span className="flex-[1] font-bold text-center">ROLE</span>
@@ -82,7 +139,7 @@ const Page = () => {
 
         {isLoading ? (
           <div className="h-[60vh] grid place-content-center">
-            <span className="loader"></span>
+            <span className="loader" />
           </div>
         ) : users.length < 1 ? (
           <div className="h-[40vh] grid place-content-center">
@@ -93,12 +150,36 @@ const Page = () => {
             {users.map((data, index) => (
               <ListBox
                 data={data}
-                key={index}
+                key={data.id ?? index}
                 setUserSelected={setUserSelected}
               />
             ))}
           </div>
         )}
+      </div>
+
+      {/* Pagination controls */}
+      <div className="flex justify-between items-center mt-6">
+        <button
+          className="px-4 py-2 bg-[#68B9CE] cursor-pointer disabled:cursor-auto rounded disabled:opacity-50"
+          disabled={page <= 1}
+          onClick={() => setPage(Math.max(1, page - 1))}
+        >
+          Prev
+        </button>
+
+        <p className="text-sm">
+          Page <b>{page}</b> of <b>{totalPages}</b> — showing <b>{limit}</b> per
+          page
+        </p>
+
+        <button
+          className="px-4 py-2 bg-[#68B9CE] cursor-pointer disabled:cursor-auto rounded disabled:opacity-50"
+          disabled={page >= totalPages}
+          onClick={() => setPage(Math.min(totalPages, page + 1))}
+        >
+          Next
+        </button>
       </div>
 
       <UserModal
