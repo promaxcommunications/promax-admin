@@ -1,5 +1,6 @@
-import { CloseIcon, SearchIcon } from "@/components/icons";
+import { SearchIcon } from "@/components/icons";
 import ImageEl from "@/components/image";
+import Modal from "@/components/modal";
 import Status from "@/components/status";
 import { users } from "@/utils";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -167,57 +168,41 @@ const EditModal = ({
   setEditIdSelected: Dispatch<SetStateAction<string | null>>;
 }) => {
   return (
-    <div
-      className={`fixed inset-0 flex justify-end backdrop-blur-sm bg-[#3A383866] transition-all duration-300 ${
-        editIdSelected ? "opacity-100 visible" : "opacity-0 invisible"
-      }`}
-      onClick={() => setEditIdSelected(null)}
+    <Modal
+      openModal={!!editIdSelected}
+      closeModal={() => setEditIdSelected(null)}
+      title="Edit Price"
     >
-      <div
-        className="w-[700px] h-full bg-gray-200 text-black rounded-l-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="p-8 flex justify-between items-center border-b border-gray-300">
-          <h2 className="font-bold text-2xl">Edit Price</h2>
-
-          <button
-            className="cursor-pointer"
-            onClick={() => setEditIdSelected(null)}
-          >
-            <CloseIcon />
-          </button>
+      <div className="px-10 mt-10 w-[600px]">
+        <div className="flex items-center gap-4 p-3 bg-white rounded-lg">
+          <ImageEl src={`/images/${editIdSelected}.png`} alt="provider" />
+          <h4 className="font-bold uppercase">{editIdSelected} AWUF</h4>
         </div>
 
-        <div className="px-16 mt-10">
-          <div className="flex items-center gap-4 p-3 bg-white rounded-lg">
-            <ImageEl src={`/images/${editIdSelected}.png`} alt="provider" />
-            <h4 className="font-bold uppercase">{editIdSelected} AWUF</h4>
+        <div className="mt-8">
+          <span className="text-[#808080] font-medium">Initial Price</span>
+          <div className="px-4 py-4 bg-white rounded-lg mt-2">
+            <span className="font-medium">₦250/GB</span>
           </div>
-
-          <div className="mt-8">
-            <span className="text-[#808080] font-medium">Initial Price</span>
-            <div className="px-4 py-4 bg-white rounded-lg mt-2">
-              <span className="font-medium">₦250/GB</span>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <span className="text-[#808080] font-medium">Enter New price</span>
-            <input
-              type="text"
-              className="px-4 py-4 bg-white rounded-lg mt-2 block w-full border border-gray-300 font-medium"
-            />
-          </div>
-
-          <button
-            onClick={() => setEditIdSelected(null)}
-            className="px-6 py-4 w-full text-xl cursor-pointer font-bold mt-10 rounded-lg bg-[#173842] text-[#32CD32]"
-          >
-            Save
-          </button>
         </div>
+
+        <div className="mt-8">
+          <span className="text-[#808080] font-medium">Enter New price</span>
+          <input
+            type="text"
+            placeholder="₦0"
+            className="px-4 py-4 bg-white rounded-lg mt-2 block w-full border border-gray-300 font-medium"
+          />
+        </div>
+
+        <button
+          onClick={() => setEditIdSelected(null)}
+          className="px-6 py-4 w-full text-xl cursor-pointer font-bold mt-10 rounded-lg bg-[#173842] text-[#32CD32]"
+        >
+          Save
+        </button>
       </div>
-    </div>
+    </Modal>
   );
 };
 

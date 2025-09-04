@@ -1,8 +1,11 @@
 import Aside from "@/components/aside";
 import Header from "@/components/header";
+import useUserStore from "@/store/user";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Lato } from "next/font/google";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const lato = Lato({
   variable: "--font-lato",
@@ -11,12 +14,26 @@ const lato = Lato({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+  const { user } = useUserStore();
+  const router = useRouter();
+  const isAuth = router.pathname.includes("auth");
+
+  useEffect(() => {
+    if (user) return;
+
+    router.replace("/auth/login");
+  }, [user]);
+
   return (
     <div className={`${lato.className} bg-[#F7F7F7] flex`}>
-      <Aside />
-      <Header />
+      {!isAuth && <Aside />}
+      {!isAuth && <Header />}
 
-      <div className="py-[108px] pl-[340px] pr-5 w-full min-h-screen">
+      <div
+        className={`${
+          isAuth ? "w-full" : "py-[108px] pl-[340px] pr-5 w-full min-h-screen"
+        }`}
+      >
         <Component {...pageProps} />
       </div>
     </div>

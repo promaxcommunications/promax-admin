@@ -1,15 +1,19 @@
+import { useGetUsers } from "@/api/user";
 import { SearchIcon } from "@/components/icons";
 import Status from "@/components/status";
-import { users } from "@/utils";
-import { useState } from "react";
+import UserModal from "@/components/userModal";
+import { parseDateTime } from "@/utils";
+import { Dispatch, SetStateAction, useState } from "react";
 
 const filters = ["all", "verified", "unverified", "deactivated"];
 
 const Page = () => {
+  const { users, isLoading } = useGetUsers();
+  const [userSelected, setUserSelected] = useState(null as User | null);
   const [filterSelected, setFilterSelected] = useState("all");
 
   return (
-    <div>
+    <div style={{ pointerEvents: isLoading ? "none" : "auto" }}>
       <div className="flex justify-between">
         <div>
           <h1 className="text-2xl font-bold">Users</h1>
@@ -66,8 +70,8 @@ const Page = () => {
         </div>
 
         <div className="px-3 bg-[#E8EBEC] py-5 flex justify-between sticky top-[88px]">
-          <span className="flex-[1] font-bold text-center">ID</span>
-          <span className="flex-[2] font-bold text-center">CUSTOMER</span>
+          {/* <span className="flex-[1] font-bold text-center">ID</span> */}
+          <span className="flex-[1.5] font-bold text-center">CUSTOMER</span>
           <span className="flex-[1] font-bold text-center">PHONE NUMBER</span>
           <span className="flex-[1] font-bold text-center">
             VIRTUAL ACCOUNT
@@ -75,55 +79,89 @@ const Page = () => {
           <span className="flex-[1] font-bold text-center">BALANCE</span>
           <span className="flex-[1] font-bold text-center">STATUS</span>
           <span className="flex-[1] font-bold text-center">DATE</span>
+          <span className="flex-[1]"></span>
         </div>
 
-        <div className="divide-y divide-gray-300">
-          {users.map((data, index) => (
-            <ListBox data={data} key={index} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="h-[60vh] grid place-content-center">
+            <span className="loader"></span>
+          </div>
+        ) : users.length < 1 ? (
+          <div className="h-[40vh] grid place-content-center">
+            <span className="text-gray-500 italic">No users</span>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-300">
+            {users.map((data, index) => (
+              <ListBox
+                data={data}
+                key={index}
+                setUserSelected={setUserSelected}
+              />
+            ))}
+          </div>
+        )}
       </div>
+
+      <UserModal
+        userSelected={userSelected}
+        setUserSelected={setUserSelected}
+      />
     </div>
   );
 };
 
-const ListBox = ({ data }: { data: (typeof users)[0] }) => {
+const ListBox = ({
+  data,
+  setUserSelected,
+}: {
+  data: User;
+  setUserSelected: Dispatch<SetStateAction<User | null>>;
+}) => {
   const {
-    date,
+    createdAt,
     email,
     firstName,
     lastName,
-    status,
-    time,
-    balance,
+    isEmailVerified,
+    walletBalance,
     phoneNumber,
-    virtualAccount,
-    id,
+    virtualAccounts,
   } = data;
 
-  const color =
-    status === "verified"
-      ? "#21C239"
-      : status === "deactivated"
-      ? "#F23737"
-      : "#FFAA00";
+  const color = isEmailVerified ? "#21C239" : "#F23737";
+  // "#FFAA00";
+  const { date, time } = parseDateTime(createdAt);
 
   return (
     <div className="px-3 py-5 flex justify-between items-center">
-      <span className="flex-[1] text-center font-bold">{id}</span>
-      <div className="flex-[2] text-center">
+      {/* <span className="flex-[1] text-center font-bold">{id}</span> */}
+      <div className="flex-[1.5] text-center">
         <h4 className="font-bold ">
           {firstName} {lastName}
         </h4>
         <h5 className="flex-[1] text-center">{email}</h5>
       </div>
       <span className="capitalize flex-[1] text-center">{phoneNumber}</span>
-      <span className="flex-[1] text-center">{virtualAccount}</span>
-      <span className="flex-[1] text-center">{balance}</span>
-      <Status value={status} color={color} />
+      <span className="flex-[1] text-center">
+        {virtualAccounts.length > 0 ? virtualAccounts[0].accountName : "None"}
+      </span>
+      <span className="flex-[1] text-center">{walletBalance}</span>
+      <Status
+        value={isEmailVerified ? "Verified" : "Unverified"}
+        color={color}
+      />
       <div className="flex-[1] text-center">
         <h4 className="">{date}</h4>
         <span className="text-[#A6A6A6]">{time}</span>
+      </div>
+      <div className="flex-[1] flex justify-center">
+        <button
+          onClick={() => setUserSelected(data)}
+          className="px-6 py-2 cursor-pointer font-semibold flex gap-3 items-center rounded bg-[#173842] text-[#32CD32]"
+        >
+          View
+        </button>
       </div>
     </div>
   );

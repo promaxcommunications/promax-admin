@@ -5,12 +5,8 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/overview");
+    router.push("/auth/login");
   }, [router]);
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Hola</h1>
-    </div>
-  );
+  return <div></div>;
 }

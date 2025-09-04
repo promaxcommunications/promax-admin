@@ -419,3 +419,25 @@ export const users = [
     time: "3:30pm",
   },
 ];
+
+export function parseDateTime(isoString: string) {
+  const date = new Date(isoString);
+
+  const formattedDate = date.toLocaleDateString("en-US", {
+    weekday: "short", // e.g. "Wed"
+    year: "numeric",
+    month: "short", // e.g. "Sept"
+    day: "numeric",
+  });
+
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
+  return {
+    date: formattedDate,
+    time: formattedTime,
+  };
+}
