@@ -2,7 +2,7 @@ import { useGetUsers } from "@/api/user";
 import { SearchIcon } from "@/components/icons";
 import Status from "@/components/status";
 import UserModal from "@/components/userModal";
-import { parseDateTime } from "@/utils";
+import { formatToNaira, parseDateTime } from "@/utils";
 import { Dispatch, SetStateAction, useState } from "react";
 
 const filters = ["all", "verified", "unverified", "deactivated"];
@@ -73,9 +73,7 @@ const Page = () => {
           {/* <span className="flex-[1] font-bold text-center">ID</span> */}
           <span className="flex-[1.5] font-bold text-center">CUSTOMER</span>
           <span className="flex-[1] font-bold text-center">PHONE NUMBER</span>
-          <span className="flex-[1] font-bold text-center">
-            VIRTUAL ACCOUNT
-          </span>
+          <span className="flex-[1] font-bold text-center">ROLE</span>
           <span className="flex-[1] font-bold text-center">BALANCE</span>
           <span className="flex-[1] font-bold text-center">STATUS</span>
           <span className="flex-[1] font-bold text-center">DATE</span>
@@ -126,7 +124,7 @@ const ListBox = ({
     isEmailVerified,
     walletBalance,
     phoneNumber,
-    virtualAccounts,
+    role,
   } = data;
 
   const color = isEmailVerified ? "#21C239" : "#F23737";
@@ -143,10 +141,10 @@ const ListBox = ({
         <h5 className="flex-[1] text-center">{email}</h5>
       </div>
       <span className="capitalize flex-[1] text-center">{phoneNumber}</span>
+      <span className="flex-[1] text-center">{role}</span>
       <span className="flex-[1] text-center">
-        {virtualAccounts.length > 0 ? virtualAccounts[0].accountName : "None"}
+        {formatToNaira(walletBalance)}
       </span>
-      <span className="flex-[1] text-center">{walletBalance}</span>
       <Status
         value={isEmailVerified ? "Verified" : "Unverified"}
         color={color}

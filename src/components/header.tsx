@@ -8,8 +8,9 @@ const Header = () => {
       <h2 className="text-2xl font-semibold capitalize">Admin Dashboard</h2>
 
       <div className="flex items-center gap-4">
-        <span className="w-7 h-7 rounded-full grid place-content-center text-sm font-bold bg-[#96D4FF]">
-          JY
+        <span className="w-9 h-9 rounded-full grid place-content-center text-base font-bold bg-[#96D4FF]">
+          {user?.firstName.slice(0, 1)}
+          {user?.lastName.slice(0, 1)}
         </span>
         <h5 className="text-[#25272C]">
           {user?.firstName} {user?.lastName}

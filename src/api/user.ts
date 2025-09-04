@@ -31,3 +31,30 @@ export const useGetUsers = () => {
     isLoading,
   };
 };
+
+export const useGetUser = () => {
+  const [user, setUser] = useState(null as null | User);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getUser = async (userId: string) => {
+    setIsLoading(true);
+
+    const res = await get("/admin/user/" + userId);
+    const { data } = res;
+
+    if (data) {
+      setUser(res.data);
+    } else {
+      console.log(res.error);
+    }
+
+    setIsLoading(false);
+  };
+
+  return {
+    user,
+    setUser,
+    getUser,
+    isLoading,
+  };
+};
