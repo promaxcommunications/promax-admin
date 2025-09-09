@@ -132,3 +132,56 @@ export const useGetUser = () => {
     isLoading,
   };
 };
+
+export type OverviewTransaction = {
+  id: string;
+  amount: number;
+  createdAt: string;
+  status: string;
+  title: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
+
+export type OverviewType = {
+  totalUsers: number;
+  totalDeposit: number;
+  totalNoOfTransaction: number;
+  transactions: OverviewTransaction[];
+};
+
+export const useGetOverview = () => {
+  const [overview, setOverview] = useState(null as null | OverviewType);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getOverview = async () => {
+    setIsLoading(true);
+
+    const res = await get("/admin/overview");
+    const { data } = res;
+
+    if (data) {
+      console.log(res.data);
+      setOverview(res.data);
+    } else {
+      console.log(res.error);
+    }
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getOverview();
+  }, []);
+
+  return {
+    overview,
+    setOverview,
+    getOverview,
+    isLoading,
+  };
+};

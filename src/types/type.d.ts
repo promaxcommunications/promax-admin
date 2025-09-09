@@ -162,6 +162,7 @@ declare interface User {
   phoneNumber: string;
   bvn: string | null;
   isEmailVerified: boolean;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
   walletBalance: number;

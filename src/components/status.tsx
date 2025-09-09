@@ -1,9 +1,9 @@
 const Status = ({ color, value }: { color?: string; value: string }) => {
   const statusColor = color
     ? color
-    : value === "success"
+    : value === "COMPLETED" || value === "SUCCESS"
     ? "#21C239"
-    : value === "failed"
+    : value === "FAILED"
     ? "#F23737"
     : "#FFAA00";
 
