@@ -23,6 +23,11 @@ export const navLinks = [
     href: "users",
   },
   {
+    title: "Transaction History",
+    icon: TransactionIcon,
+    href: "transaction",
+  },
+  {
     title: "Bill Payments",
     icon: BillIcon,
     href: "bill",
@@ -41,11 +46,6 @@ export const navLinks = [
     title: "Deposit History",
     icon: DepositIcon,
     href: "deposit",
-  },
-  {
-    title: "Transaction History",
-    icon: TransactionIcon,
-    href: "transaction",
   },
   {
     title: "Referrals",

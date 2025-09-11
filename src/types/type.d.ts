@@ -45,13 +45,6 @@ declare interface Complaint {
   createdAt: string;
 }
 
-declare interface BaseTransaction {
-  id: string;
-  amount: number;
-  status: TransactionStatus;
-  createdAt: string;
-}
-
 declare interface VirtualAccount {
   accountNumber: string;
   bankName: string;
@@ -190,4 +183,25 @@ declare interface User {
   tvSubscriptionTransaction: TvSubscriptionTransaction[];
   paymentHistory: PaymentHistory[];
   refunds: Refund[];
+}
+
+declare interface OverviewTransaction {
+  id: string;
+  amount: number;
+  createdAt: string;
+  status: string;
+  title: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
+declare interface OverviewType {
+  totalUsers: number;
+  totalDeposit: number;
+  totalNoOfTransaction: number;
+  transactions: OverviewTransaction[];
 }

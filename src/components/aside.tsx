@@ -27,7 +27,7 @@ const Aside = () => {
               "w-full flex py-5 pl-16 items-center font-medium cursor-pointer gap-2 " +
               (currentPath.includes(link.href)
                 ? "bg-[#68B9CE] text-[#FEFEFE]"
-                : "text-black")
+                : "text-black hover:bg-gray-200")
             }
           >
             <link.icon isActive={currentPath.includes(link.href)} />

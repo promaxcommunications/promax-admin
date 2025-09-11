@@ -1,4 +1,4 @@
-import { OverviewTransaction, useGetOverview } from "@/api/user";
+import { useGetOverview } from "@/api/user";
 import {
   ArrowRightIcon,
   DepositIconAlt,
@@ -17,10 +17,7 @@ const Page = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold">Welcome {user?.firstName}</h1>
-      <p className="mt-2">
-        Overview of the entire activity on the app, Bill Payments, Deposits and
-        all that.
-      </p>
+      <p className="mt-2">Overview of the entire activity on the app.</p>
 
       <div className="mt-10 flex gap-2">
         <article className="pt-9 pb-4 px-4 bg-white rounded flex-1">
@@ -97,7 +94,7 @@ const Page = () => {
 
       <div className="mt-10 bg-white text-[#2B2B2B] text-sm">
         <div className="flex justify-between items-center px-3 py-7">
-          <h3 className="text-lg font-black">Bill payment Transaction</h3>
+          <h3 className="text-lg font-black">Transactions</h3>
           {/* <h5 className=" font-bold text-[#0068B3]">See all</h5> */}
         </div>
 
