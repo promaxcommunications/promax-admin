@@ -95,46 +95,86 @@ declare interface Complaint {
 declare interface BaseTransaction {
   id: string;
   amount: number;
-  status: TransactionStatus;
   createdAt: string;
+  updatedAt: string;
+  status: string;
+  title: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+
+  type?: "airtime" | "data" | "betting" | "examPin" | "electricity" | "tv";
 }
 
 declare interface AirtimeTransaction extends BaseTransaction {
-  type: TransactionType.AIRTIME;
+  type: "airtime";
+  network: string;
   phoneNumber: string;
-  provider: string;
+  refundProcessed: boolean;
+  requestId: string;
+  responseData?: string;
+  transactionId: string;
 }
 
 declare interface DataTransaction extends BaseTransaction {
-  type: TransactionType.DATA;
+  type: "data";
+  network: string;
+  packageName?: string;
   phoneNumber: string;
   plan: string;
-  provider: string;
+  refundProcessed: boolean;
+  requestId: string;
+  responseData?: string;
+  transactionId: string;
 }
 
 declare interface BettingTransaction extends BaseTransaction {
-  type: TransactionType.BETTING;
-  provider: string;
-  customerId: string;
+  type: "betting";
+  bettingPlatform: string;
+  accountNumber: string;
+  transactionId: string;
 }
 
 declare interface ExamPinTransaction extends BaseTransaction {
-  type: TransactionType.EXAM_PIN;
+  type: "examPin";
   examType: string;
-  pin: string;
+  phoneNumber?: string;
+  pin?: string;
+  serialNumber?: string;
+  Token?: string;
+  transactionId: string;
 }
 
 declare interface ElectricityTransaction extends BaseTransaction {
-  type: TransactionType.ELECTRICITY;
-  meterNumber: string;
+  type: "electricity";
   provider: string;
+  meterNumber: string;
+  meterType: string;
+  units?: string;
+  token?: string;
+  transactionId: string;
 }
 
 declare interface TvSubscriptionTransaction extends BaseTransaction {
-  type: TransactionType.TV_SUBSCRIPTION;
+  type: "tv";
   provider: string;
-  smartCardNumber: string;
+  smartcardNumber: string;
+  package: string;
+  isRenewal: boolean;
+  refundProcessed: boolean;
+  transactionId: string;
 }
+
+declare type Transaction =
+  | AirtimeTransaction
+  | DataTransaction
+  | BettingTransaction
+  | ExamPinTransaction
+  | ElectricityTransaction
+  | TvSubscriptionTransaction;
 
 declare interface PaymentHistory extends BaseTransaction {
   type: TransactionType.PAYMENT;
@@ -185,23 +225,9 @@ declare interface User {
   refunds: Refund[];
 }
 
-declare interface OverviewTransaction {
-  id: string;
-  amount: number;
-  createdAt: string;
-  status: string;
-  title: string;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-}
-
 declare interface OverviewType {
   totalUsers: number;
   totalDeposit: number;
   totalNoOfTransaction: number;
-  transactions: OverviewTransaction[];
+  transactions: BaseTransaction[];
 }

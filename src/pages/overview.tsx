@@ -127,7 +127,7 @@ const Page = () => {
   );
 };
 
-const ListBox = ({ data }: { data: OverviewTransaction }) => {
+const ListBox = ({ data }: { data: BaseTransaction }) => {
   const { amount, createdAt, id, status, title, user } = data;
   const { date, time } = parseDateTime(createdAt);
   const { email, firstName, lastName } = user;

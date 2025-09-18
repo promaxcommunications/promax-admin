@@ -3,7 +3,7 @@ import { SearchIcon } from "@/components/icons";
 import Status from "@/components/status";
 import UserModal from "@/components/userModal";
 import { formatToNaira, parseDateTime } from "@/utils";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 const filters = ["all", "verified", "unverified"] as const;
 
@@ -51,10 +51,12 @@ const Page = () => {
     setSort(val as any);
   };
 
+  const topRef = useRef(null as null | HTMLDivElement);
+
   return (
     <div style={{ pointerEvents: isLoading ? "none" : "auto" }}>
       <div className="flex justify-between">
-        <div>
+        <div ref={topRef}>
           <h1 className="text-2xl font-bold">Users</h1>
           <p className="mt-2">Here is a list of all users on the platform</p>
         </div>
@@ -163,7 +165,10 @@ const Page = () => {
         <button
           className="px-4 py-2 bg-[#68B9CE] cursor-pointer disabled:cursor-auto rounded disabled:opacity-50"
           disabled={page <= 1}
-          onClick={() => setPage(Math.max(1, page - 1))}
+          onClick={() => {
+            setPage(Math.max(1, page - 1));
+            topRef.current?.scrollIntoView({ behavior: "smooth" });
+          }}
         >
           Prev
         </button>
@@ -176,7 +181,10 @@ const Page = () => {
         <button
           className="px-4 py-2 bg-[#68B9CE] cursor-pointer disabled:cursor-auto rounded disabled:opacity-50"
           disabled={page >= totalPages}
-          onClick={() => setPage(Math.min(totalPages, page + 1))}
+          onClick={() => {
+            setPage(Math.min(totalPages, page + 1));
+            topRef.current?.scrollIntoView({ behavior: "smooth" });
+          }}
         >
           Next
         </button>

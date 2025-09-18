@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { SearchIcon } from "@/components/icons";
 import Status from "@/components/status";
 import { formatToNaira, parseDateTime } from "@/utils";
 import { useGetTransactions } from "@/api/user";
+import TransactionModal from "@/components/transactionModal";
 
-const serviceFilters = [
+export const serviceFilters = [
   "airtime",
   "data",
   "betting",
@@ -12,7 +13,7 @@ const serviceFilters = [
   "tv",
   "examPin",
 ] as const;
-const statusFilters = ["all", "SUCCESS", "FAILED", "PENDING"] as const;
+export const statusFilters = ["all", "SUCCESS", "FAILED", "PENDING"] as const;
 
 const Page = () => {
   const {
@@ -35,6 +36,9 @@ const Page = () => {
     totalCount,
   } = useGetTransactions();
 
+  const [transactionSelected, setTransactionSelected] =
+    useState<BaseTransaction | null>(null);
+
   const [searchTerm, setSearchTerm] = useState(search || "");
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -44,10 +48,12 @@ const Page = () => {
     return () => clearTimeout(timer);
   }, [searchTerm, setSearch, setPage]);
 
+  const topRef = useRef(null as null | HTMLDivElement);
+
   return (
     <div style={{ pointerEvents: isLoading ? "none" : "auto" }}>
       <div className="flex justify-between">
-        <div>
+        <div ref={topRef}>
           <h1 className="text-2xl font-bold">Transactions</h1>
           <p className="mt-2">
             Here is a list of all transactions on the platform
@@ -147,6 +153,7 @@ const Page = () => {
           <span className="flex-[1] font-bold text-center">AMOUNT</span>
           <span className="flex-[1] font-bold text-center">STATUS</span>
           <span className="flex-[1] font-bold text-center">DATE</span>
+          <span className="flex-[1]"></span>
         </div>
 
         {isLoading ? (
@@ -160,7 +167,11 @@ const Page = () => {
         ) : (
           <div className="divide-y divide-gray-300">
             {transactions.map((tx, index) => (
-              <ListBox key={index} data={tx} />
+              <ListBox
+                key={index}
+                data={tx}
+                setTransactionSelected={setTransactionSelected}
+              />
             ))}
           </div>
         )}
@@ -171,7 +182,10 @@ const Page = () => {
         <button
           className="px-4 py-2 bg-[#68B9CE] rounded disabled:opacity-50"
           disabled={page <= 1}
-          onClick={() => setPage(page - 1)}
+          onClick={() => {
+            setPage(page - 1);
+            topRef.current?.scrollIntoView({ behavior: "smooth" });
+          }}
         >
           Prev
         </button>
@@ -184,16 +198,31 @@ const Page = () => {
         <button
           className="px-4 py-2 bg-[#68B9CE] rounded disabled:opacity-50"
           disabled={page >= totalPages}
-          onClick={() => setPage(page + 1)}
+          onClick={() => {
+            setPage(page + 1);
+            topRef.current?.scrollIntoView({ behavior: "smooth" });
+          }}
         >
           Next
         </button>
       </div>
+
+      <TransactionModal
+        transactionSelected={transactionSelected}
+        setTransactionSelected={setTransactionSelected}
+        service={service}
+      />
     </div>
   );
 };
 
-const ListBox = ({ data }: { data: OverviewTransaction }) => {
+const ListBox = ({
+  data,
+  setTransactionSelected,
+}: {
+  data: BaseTransaction;
+  setTransactionSelected: Dispatch<SetStateAction<BaseTransaction | null>>;
+}) => {
   const { amount, createdAt, id, status, title, user } = data;
   const { date, time } = parseDateTime(createdAt);
 
@@ -212,6 +241,14 @@ const ListBox = ({ data }: { data: OverviewTransaction }) => {
       <div className="flex-[1] text-center">
         <h4>{date}</h4>
         <span className="text-[#A6A6A6]">{time}</span>
+      </div>
+      <div className="flex-[1] flex justify-center">
+        <button
+          onClick={() => setTransactionSelected(data)}
+          className="px-6 py-2 cursor-pointer font-semibold flex gap-3 items-center rounded bg-[#173842] text-[#32CD32]"
+        >
+          View
+        </button>
       </div>
     </div>
   );

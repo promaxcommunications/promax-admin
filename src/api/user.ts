@@ -175,7 +175,7 @@ export type ServiceFilter =
 export type StatusFilter = "all" | "SUCCESS" | "FAILED" | "PENDING";
 
 export const useGetTransactions = () => {
-  const [transactions, setTransactions] = useState<OverviewTransaction[]>([]);
+  const [transactions, setTransactions] = useState<BaseTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Pagination
@@ -209,6 +209,7 @@ export const useGetTransactions = () => {
     const query = `/admin/transactions?${params.toString()}`;
     console.log(query);
 
+    // await new Promise((r) => setTimeout(r, 5000));
     const res = await get(query);
     const { data } = res;
 
@@ -252,5 +253,41 @@ export const useGetTransactions = () => {
     status,
     setStatus,
     refresh: fetchTransactions,
+  };
+};
+
+export const useGetTransaction = () => {
+  const [transaction, setTransaction] = useState<Transaction | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getTransaction = async (transactionId: string, type: string) => {
+    setIsLoading(true);
+
+    try {
+      const res = await get(
+        `/admin/transaction?id=${transactionId}&type=${type}`
+      );
+      const { data } = res;
+
+      if (data) {
+        // Add discriminant based on type
+        const typedTransaction: Transaction = {
+          ...data,
+          type, // ← important, add type discriminator
+        };
+        setTransaction(typedTransaction);
+      } else {
+        console.log(res.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    transaction,
+    setTransaction,
+    getTransaction,
+    isLoading,
   };
 };
