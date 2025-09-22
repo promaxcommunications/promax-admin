@@ -1,13 +1,12 @@
-import { useGetVariations } from "@/api/user";
-import EditVariationModal from "@/components/editVariationModal";
+import { useGetPlans } from "@/api/user";
+import { SearchIcon } from "@/components/icons";
 import ImageEl from "@/components/image";
+import Modal from "@/components/modal";
 import { formatToNaira } from "@/utils";
 import { Dispatch, SetStateAction, useState } from "react";
 
 const Page = () => {
-  const [editVariationSelected, setEditVariationSelected] = useState(
-    null as null | Variation
-  );
+  const [editIdSelected, setEditIdSelected] = useState(null as null | string);
 
   const {
     filterSelected,
@@ -17,9 +16,7 @@ const Page = () => {
     data,
     filters,
     isLoading,
-    setData,
-    setVariation,
-  } = useGetVariations();
+  } = useGetPlans();
 
   return (
     <div>
@@ -29,6 +26,15 @@ const Page = () => {
           <p className="mt-2">
             Here is a list of all Data Services provided on the platform.
           </p>
+        </div>
+
+        <div className="w-[390px] bg-white py-3 h-fit px-4 flex items-center gap-2.5 border border-[#E6E6E6] rounded">
+          <SearchIcon />
+          <input
+            type="search"
+            className="outline-none bg-transparent text-sm font-medium w-full"
+            placeholder="Search by ID, Name, Email, Phone number"
+          />
         </div>
       </div>
 
@@ -95,9 +101,6 @@ const Page = () => {
           <span className="flex-[1] font-bold text-center">CODE</span>
           <span className="flex-[2] font-bold text-center">TITLE</span>
           <span className="flex-[1] font-bold text-center">AMOUNT</span>
-          <span className="flex-[1] font-bold text-center">
-            PLATFORM AMOUNT
-          </span>
           <span className="flex-[1] font-bold text-center">FIXED PRICE</span>
           <span className="flex-[1]" />
         </div>
@@ -116,19 +119,17 @@ const Page = () => {
               <ListBox
                 data={data}
                 key={index}
-                setEditVariationSelected={setEditVariationSelected}
+                providerSelected={categorySelected}
+                setEditIdSelected={setEditIdSelected}
               />
             )) || []}
           </div>
         )}
       </div>
 
-      <EditVariationModal
-        editVariationSelected={editVariationSelected}
-        setEditVariationSelected={setEditVariationSelected}
-        filterSelected={filterSelected}
-        setData={setData}
-        setVariation={setVariation}
+      <EditModal
+        editIdSelected={editIdSelected}
+        setEditIdSelected={setEditIdSelected}
       />
     </div>
   );
@@ -136,12 +137,14 @@ const Page = () => {
 
 const ListBox = ({
   data,
-  setEditVariationSelected,
+  providerSelected,
+  setEditIdSelected,
 }: {
   data: Variation;
-  setEditVariationSelected: Dispatch<SetStateAction<Variation | null>>;
+  providerSelected: string;
+  setEditIdSelected: Dispatch<SetStateAction<string | null>>;
 }) => {
-  const { amount, fixedPrice, name, variationCode, platformPrice } = data;
+  const { amount, fixedPrice, name, variationCode } = data;
 
   return (
     <div className="px-3 py-5 flex justify-between items-center">
@@ -152,20 +155,63 @@ const ListBox = ({
       <span className="capitalize flex-[1] text-center">
         {formatToNaira(amount)}
       </span>
-      <span className="capitalize flex-[1] text-center">
-        {formatToNaira(platformPrice!)}
-      </span>
       <span className="flex-[1] text-center">{fixedPrice ? "Yes" : "No"}</span>
 
       <div className="flex-[1] flex justify-center">
         <button
-          onClick={() => setEditVariationSelected(data)}
+          onClick={() => setEditIdSelected(providerSelected)}
           className="px-6 py-2 cursor-pointer font-semibold flex gap-3 items-center rounded bg-[#173842] text-[#32CD32]"
         >
           Edit Price
         </button>
       </div>
     </div>
+  );
+};
+
+const EditModal = ({
+  editIdSelected,
+  setEditIdSelected,
+}: {
+  editIdSelected: string | null;
+  setEditIdSelected: Dispatch<SetStateAction<string | null>>;
+}) => {
+  return (
+    <Modal
+      openModal={!!editIdSelected}
+      closeModal={() => setEditIdSelected(null)}
+      title="Edit Price"
+    >
+      <div className="px-10 mt-10 w-[600px]">
+        <div className="flex items-center gap-4 p-3 bg-white rounded-lg">
+          <ImageEl src={`/images/${editIdSelected}.png`} alt="provider" />
+          <h4 className="font-bold uppercase">{editIdSelected} AWUF</h4>
+        </div>
+
+        <div className="mt-8">
+          <span className="text-[#808080] font-medium">Initial Price</span>
+          <div className="px-4 py-4 bg-white rounded-lg mt-2">
+            <span className="font-medium">₦250/GB</span>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <span className="text-[#808080] font-medium">Enter New price</span>
+          <input
+            type="text"
+            placeholder="₦0"
+            className="px-4 py-4 bg-white rounded-lg mt-2 block w-full border border-gray-300 font-medium"
+          />
+        </div>
+
+        <button
+          onClick={() => setEditIdSelected(null)}
+          className="px-6 py-4 w-full text-xl cursor-pointer font-bold mt-10 rounded-lg bg-[#173842] text-[#32CD32]"
+        >
+          Save
+        </button>
+      </div>
+    </Modal>
   );
 };
 

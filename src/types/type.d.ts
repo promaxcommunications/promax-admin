@@ -45,51 +45,15 @@ declare interface Complaint {
   createdAt: string;
 }
 
-declare interface VirtualAccount {
-  accountNumber: string;
-  bankName: string;
-  accountName: string;
-}
+declare interface Variation {
+  amount: number;
+  fixedPrice: boolean;
+  name: string;
+  variationCode: string;
 
-declare interface ReferralCode {
-  id: string;
-  code: string;
-  userId: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-declare interface Referral {
-  id: string;
-  referredUserName: string;
-  referrerName: string;
-  status: string; // could also enum if schema defines
-}
-
-declare interface Device {
-  pushToken: string;
-  model: string;
-  osName: string;
-  osVersion: string;
-  lastUsed?: string;
-}
-
-declare interface Notification {
-  id: string;
-  title: string;
-  message?: string;
-  type: NotificationType;
-  status: NotificationStatus;
-  createdAt: string;
-}
-
-declare interface Complaint {
-  id: string;
-  subject: string;
-  message: string;
-  status: ComplaintStatus;
-  createdAt: string;
+  id?: string;
+  provider?: string;
+  platformPrice?: string;
 }
 
 declare interface BaseTransaction {

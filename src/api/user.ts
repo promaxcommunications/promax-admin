@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { get } from ".";
+import { formatNetworks } from "@/utils";
 
 type SortKey = "date" | "balance" | "role" | "referralPoints" | "lastActive";
 type FilterKey = "all" | "verified" | "unverified";
@@ -289,5 +290,168 @@ export const useGetTransaction = () => {
     setTransaction,
     getTransaction,
     isLoading,
+  };
+};
+
+export const useGetPlans = () => {
+  const filters = [
+    {
+      title: "Data",
+      query: "/data/get-data-variations",
+      category: ["MTN", "GLO", "AIRTEL", "9MOBILE"],
+    },
+    {
+      title: "Cable TV",
+      query: "/tv/get-tv-packages",
+      category: ["dstv", "gotv", "showmax", "startimes"],
+    },
+    {
+      title: "Exam Pin",
+      query: "/exam-pin/variations",
+      category: ["JAMB", "WAEC"],
+    },
+  ];
+
+  const [variation, setVariation] = useState<Record<string, any[]>>({});
+  const [data, setData] = useState<Variation[]>([]);
+  const [filterSelected, setFilterSelected] = useState(filters[0]);
+  const [categorySelected, setCategorySelected] = useState(
+    filters[0].category[0]
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getPlans = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const res = await get(filterSelected.query);
+      let { data } = res;
+
+      if (data) {
+        if (filterSelected.title === "Data") {
+          data = formatNetworks(data);
+        }
+
+        console.log(data);
+
+        setVariation(data);
+        setData(variation[categorySelected] || []);
+      } else {
+        console.log(res.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filterSelected]);
+
+  useEffect(() => {
+    getPlans();
+    // Reset to first category when filter changes
+    setCategorySelected(filterSelected.category[0]);
+  }, [filterSelected, getPlans]);
+
+  useEffect(() => {
+    setData(variation[categorySelected] || []);
+  }, [categorySelected, variation]);
+
+  return {
+    filterSelected,
+    setFilterSelected,
+    categorySelected,
+    setCategorySelected,
+    getPlans,
+    data,
+    isLoading,
+    filters,
+  };
+};
+
+export const variationfilters = [
+  {
+    title: "Data",
+    query: "data",
+    category: ["MTN", "GLO", "AIRTEL", "9MOBILE"],
+  },
+  {
+    title: "Cable TV",
+    query: "tv",
+    category: ["dstv", "gotv", "showmax", "startimes"],
+  },
+  {
+    title: "Exam Pin",
+    query: "exam",
+    category: ["JAMB", "WAEC"],
+  },
+];
+export const useGetVariations = () => {
+  const [variation, setVariation] = useState<Variation[]>([]);
+  const [data, setData] = useState<Variation[]>([]);
+  const [filterSelected, setFilterSelected] = useState(variationfilters[0]);
+  const [categorySelected, setCategorySelected] = useState(
+    variationfilters[0].category[0]
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getVariations = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const res = await get(`/admin/variations/${filterSelected.query}`);
+      let { data } = res;
+
+      if (data) {
+        data = data.variations;
+
+        setVariation(data);
+        console.log(data);
+
+        const categoryVariation =
+          data.filter(
+            (data: any) =>
+              data.provider.toLowerCase() === categorySelected.toLowerCase()
+          ) || [];
+        setData(categoryVariation);
+      } else {
+        console.log(res.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filterSelected]);
+
+  useEffect(() => {
+    getVariations();
+    // Reset to first category when filter changes
+    setCategorySelected(filterSelected.category[0]);
+  }, [filterSelected, getVariations]);
+
+  useEffect(() => {
+    let category = "";
+    if (categorySelected === "9MOBILE") {
+      category = "NINE_MOBILE";
+    } else {
+      category = categorySelected;
+    }
+
+    const categoryVariation =
+      variation.filter(
+        (data) => data.provider?.toLowerCase() === category.toLowerCase()
+      ) || [];
+    setData(categoryVariation);
+  }, [categorySelected, variation]);
+
+  return {
+    filterSelected,
+    setFilterSelected,
+    categorySelected,
+    setCategorySelected,
+    getVariations,
+    data,
+    isLoading,
+    filters: variationfilters,
+    setData,
+    setVariation,
   };
 };
