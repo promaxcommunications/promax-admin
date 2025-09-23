@@ -165,17 +165,17 @@ export const useGetOverview = () => {
   };
 };
 
-export type TranactionSortKey = "date" | "amount";
-export type ServiceFilter =
-  | "airtime"
-  | "data"
-  | "betting"
-  | "electricity"
-  | "tv"
-  | "examPin";
-export type StatusFilter = "all" | "SUCCESS" | "FAILED" | "PENDING";
-
 export const useGetTransactions = () => {
+  type TranactionSortKey = "date" | "amount";
+  type ServiceFilter =
+    | "airtime"
+    | "data"
+    | "betting"
+    | "electricity"
+    | "tv"
+    | "examPin";
+  type StatusFilter = "all" | "SUCCESS" | "FAILED" | "PENDING";
+
   const [transactions, setTransactions] = useState<BaseTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -215,8 +215,6 @@ export const useGetTransactions = () => {
     const { data } = res;
 
     if (data) {
-      console.log(data);
-
       const { transactions, totalCount, totalPages } = data;
       setTransactions(transactions);
       setTotalPages(totalPages ?? 1);
@@ -251,6 +249,86 @@ export const useGetTransactions = () => {
     setSortOrder,
     service,
     setService,
+    status,
+    setStatus,
+    refresh: fetchTransactions,
+  };
+};
+
+export const useGetPaymentHistory = () => {
+  type TranactionSortKey = "date" | "amount";
+
+  type StatusFilter = "all" | "COMPLETED" | "FAILED" | "PENDING";
+
+  const [transactions, setTransactions] = useState<PaymentHistory[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  // Controls
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<TranactionSortKey>("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [status, setStatus] = useState<StatusFilter>("all");
+
+  const limit = 20;
+
+  const fetchTransactions = useCallback(async () => {
+    setIsLoading(true);
+
+    const params = new URLSearchParams();
+    params.set("page", String(page));
+    params.set("limit", String(limit));
+
+    if (search.trim()) params.set("search", search.trim());
+    if (status !== "all") params.set("status", status);
+
+    params.set("sortBy", sort === "amount" ? "amount" : "date");
+    params.set("sortOrder", sortOrder);
+
+    const query = `/admin/payment?${params.toString()}`;
+    console.log(query);
+
+    // await new Promise((r) => setTimeout(r, 5000));
+    const res = await get(query);
+    const { data } = res;
+
+    if (data) {
+      const { paymentHistory, totalCount, totalPages } = data;
+      setTransactions(paymentHistory);
+      setTotalPages(totalPages ?? 1);
+      setTotalCount(totalCount ?? 0);
+    } else {
+      setTransactions([]);
+      setTotalPages(1);
+      setTotalCount(0);
+      console.error("Failed to fetch transactions", res.error);
+    }
+
+    setIsLoading(false);
+  }, [page, search, status, sort, sortOrder]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  return {
+    transactions,
+    isLoading,
+    page,
+    setPage,
+    totalPages,
+    totalCount,
+    limit,
+    search,
+    setSearch,
+    sort,
+    setSort,
+    sortOrder,
+    setSortOrder,
     status,
     setStatus,
     refresh: fetchTransactions,
@@ -333,8 +411,6 @@ export const useGetPlans = () => {
           data = formatNetworks(data);
         }
 
-        console.log(data);
-
         setVariation(data);
         setData(variation[categorySelected] || []);
       } else {
@@ -367,24 +443,25 @@ export const useGetPlans = () => {
   };
 };
 
-export const variationfilters = [
-  {
-    title: "Data",
-    query: "data",
-    category: ["MTN", "GLO", "AIRTEL", "9MOBILE"],
-  },
-  {
-    title: "Cable TV",
-    query: "tv",
-    category: ["dstv", "gotv", "showmax", "startimes"],
-  },
-  {
-    title: "Exam Pin",
-    query: "exam",
-    category: ["JAMB", "WAEC"],
-  },
-];
 export const useGetVariations = () => {
+  const variationfilters = [
+    {
+      title: "Data",
+      query: "data",
+      category: ["MTN", "GLO", "AIRTEL", "9MOBILE"],
+    },
+    {
+      title: "Cable TV",
+      query: "tv",
+      category: ["dstv", "gotv", "showmax", "startimes"],
+    },
+    {
+      title: "Exam Pin",
+      query: "exam",
+      category: ["JAMB", "WAEC"],
+    },
+  ];
+
   const [variation, setVariation] = useState<Variation[]>([]);
   const [data, setData] = useState<Variation[]>([]);
   const [filterSelected, setFilterSelected] = useState(variationfilters[0]);
@@ -405,7 +482,6 @@ export const useGetVariations = () => {
         data = data.variations;
 
         setVariation(data);
-        console.log(data);
 
         const categoryVariation =
           data.filter(
@@ -453,5 +529,38 @@ export const useGetVariations = () => {
     filters: variationfilters,
     setData,
     setVariation,
+  };
+};
+
+export const useGetMarkup = () => {
+  const [data, setData] = useState<Markup[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getData = async () => {
+    setIsLoading(true);
+
+    try {
+      const res = await get(`/admin/markups`);
+      const { data } = res;
+
+      if (data) {
+        setData(data);
+      } else {
+        console.log(res.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return {
+    data,
+    setData,
+    getData,
+    isLoading,
   };
 };

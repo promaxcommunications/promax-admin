@@ -56,6 +56,17 @@ declare interface Variation {
   platformPrice?: string;
 }
 
+declare interface Markup {
+  id: string;
+  description: string;
+  decrementPercentage: number | null;
+  incrementPercentage: number | null;
+  isActive: boolean;
+  serviceType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 declare interface BaseTransaction {
   id: string;
   amount: number;
@@ -141,9 +152,10 @@ declare type Transaction =
   | TvSubscriptionTransaction;
 
 declare interface PaymentHistory extends BaseTransaction {
-  type: TransactionType.PAYMENT;
-  method: string;
-  reference: string;
+  paymentType: string;
+  title: string;
+  metadata?: object;
+  reference?: string | null;
 }
 
 declare interface Refund extends BaseTransaction {
@@ -193,5 +205,6 @@ declare interface OverviewType {
   totalUsers: number;
   totalDeposit: number;
   totalNoOfTransaction: number;
+  totalNoOfSuccessfulTransaction: number;
   transactions: BaseTransaction[];
 }

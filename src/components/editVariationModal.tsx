@@ -1,18 +1,17 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Modal from "./modal";
 import { API } from "@/api";
-import { variationfilters } from "@/api/user";
 
 const EditVariationModal = ({
   editVariationSelected,
   setEditVariationSelected,
-  filterSelected,
+  type,
   setData,
   setVariation,
 }: {
   editVariationSelected: Variation | null;
   setEditVariationSelected: Dispatch<SetStateAction<Variation | null>>;
-  filterSelected: (typeof variationfilters)[0];
+  type: string;
   setData: Dispatch<SetStateAction<Variation[]>>;
   setVariation: Dispatch<SetStateAction<Variation[]>>;
 }) => {
@@ -38,7 +37,7 @@ const EditVariationModal = ({
     // API call to update variation
     try {
       const res = await API.put(
-        `/admin/variations/${filterSelected.query}/${editVariationSelected?.id}`,
+        `/admin/variations/${type}/${editVariationSelected?.id}`,
         form
       );
 

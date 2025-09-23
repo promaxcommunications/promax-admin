@@ -126,7 +126,7 @@ const Page = () => {
       <EditVariationModal
         editVariationSelected={editVariationSelected}
         setEditVariationSelected={setEditVariationSelected}
-        filterSelected={filterSelected}
+        type={filterSelected.query}
         setData={setData}
         setVariation={setVariation}
       />

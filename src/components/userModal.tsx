@@ -142,7 +142,7 @@ const UserModal = ({
               <li>Exam Pins: {user.examPinTransactions.length}</li>
               <li>Electricity: {user.electricityTransactions.length}</li>
               <li>TV Subscriptions: {user.tvSubscriptionTransaction.length}</li>
-              <li>Payment History: {user.paymentHistory.length}</li>
+              <li>Deposit History: {user.paymentHistory.length}</li>
               <li>Refunds: {user.refunds.length}</li>
             </ul>
           </section>
@@ -251,12 +251,12 @@ const UserModal = ({
 
           {/* Payments */}
           <Section
-            title="Payment History"
+            title="Deposit History"
             items={user.paymentHistory}
             renderItem={(t) => (
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
-                <p>Method: {t.method}</p>
+                <p>Type: {t.paymentType}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>

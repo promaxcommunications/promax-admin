@@ -43,7 +43,7 @@ const Page = () => {
           <div className="flex gap-4">
             <DepositIconAlt />
             <div>
-              <h3 className="font-bold">Deposits</h3>
+              <h3 className="font-bold">Total Deposits</h3>
               <h3 className="font-bold mt-2 text-2xl">
                 {formatToNaira(overview?.totalDeposit || 0)}
               </h3>
@@ -74,6 +74,26 @@ const Page = () => {
             className="mt-8 py-3 cursor-pointer w-full rounded flex items-center justify-center gap-3 bg-[#FEEBEB] text-[#F23737] text-sm font-bold"
           >
             View all <ArrowRightIcon color="#F23737" />
+          </Link>
+        </article>
+        <article className="pt-9 pb-4 px-4 bg-white rounded flex-1">
+          <div className="flex gap-4">
+            <TransactionIconAlt />
+            <div>
+              <h3 className="font-bold">Total Successful Transactions</h3>
+              <h3 className="font-bold mt-2 text-2xl">
+                {(
+                  overview?.totalNoOfSuccessfulTransaction ?? 0
+                ).toLocaleString()}
+              </h3>
+            </div>
+          </div>
+
+          <Link
+            href="/transaction"
+            className="mt-8 py-3 cursor-pointer w-full rounded flex items-center justify-center gap-3 bg-[#E9F9EB] text-[#32CD32] text-sm font-bold"
+          >
+            View all <ArrowRightIcon color="#32CD32" />
           </Link>
         </article>
 

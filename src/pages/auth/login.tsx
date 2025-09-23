@@ -73,7 +73,11 @@ const Page = () => {
               type="submit"
               className="px-6 py-4 w-full text-xl cursor-pointer font-bold rounded-lg text-[#173842] bg-[#32CD32]"
             >
-              {isLoading ? <span className="loader-small"></span> : "Login"}
+              {isLoading ? (
+                <span className="loader-small-white"></span>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>

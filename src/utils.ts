@@ -1,11 +1,11 @@
 import {
   OverviewIcon,
-  BillIcon,
+  // BillIcon,
   DepositIcon,
   MarkupIcon,
-  NotificationIcon,
-  ReferralIcon,
-  SettingIcon,
+  // NotificationIcon,
+  // ReferralIcon,
+  // SettingIcon,
   TransactionIcon,
   UserIcon,
   VariationIcon,
@@ -23,6 +23,11 @@ export const navLinks = [
     href: "users",
   },
   {
+    title: "Deposit History",
+    icon: DepositIcon,
+    href: "deposit",
+  },
+  {
     title: "Transaction History",
     icon: TransactionIcon,
     href: "transaction",
@@ -32,41 +37,36 @@ export const navLinks = [
     icon: VariationIcon,
     href: "variation",
   },
-  {
-    title: "Bundle Plans",
-    icon: BillIcon,
-    href: "plans",
-  },
+  // {
+  //   title: "Bundle Plans",
+  //   icon: BillIcon,
+  //   href: "plans",
+  // },
   {
     title: "Markup Services",
     icon: MarkupIcon,
     href: "markup",
   },
-  {
-    title: "Deposit History",
-    icon: DepositIcon,
-    href: "deposit",
-  },
-  {
-    title: "Bill Payments",
-    icon: BillIcon,
-    href: "bill",
-  },
-  {
-    title: "Referrals",
-    icon: ReferralIcon,
-    href: "referrals",
-  },
-  {
-    title: "Notifications",
-    icon: NotificationIcon,
-    href: "notifications",
-  },
-  {
-    title: "Admin Settings",
-    icon: SettingIcon,
-    href: "settings",
-  },
+  // {
+  //   title: "Bill Payments",
+  //   icon: BillIcon,
+  //   href: "bill",
+  // },
+  // {
+  //   title: "Referrals",
+  //   icon: ReferralIcon,
+  //   href: "referrals",
+  // },
+  // {
+  //   title: "Notifications",
+  //   icon: NotificationIcon,
+  //   href: "notifications",
+  // },
+  // {
+  //   title: "Admin Settings",
+  //   icon: SettingIcon,
+  //   href: "settings",
+  // },
 ];
 
 export function parseDateTime(isoString: string) {
