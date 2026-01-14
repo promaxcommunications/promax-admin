@@ -1,5 +1,3 @@
-import Aside from "@/components/aside";
-import Header from "@/components/header";
 import useUserStore from "@/store/user";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
@@ -17,7 +15,6 @@ const lato = Lato({
 export default function App({ Component, pageProps }: AppProps) {
   const { user } = useUserStore();
   const router = useRouter();
-  const isAuth = router.pathname.includes("auth");
 
   useEffect(() => {
     if (user) return;
@@ -31,14 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Promax Admin</title>
       </Head>
 
-      {!isAuth && <Aside />}
-      {!isAuth && <Header />}
-
-      <div
-        className={`${
-          isAuth ? "w-full" : "py-[108px] pl-[340px] pr-5 w-full min-h-screen"
-        }`}
-      >
+      <div className="w-full">
         <Component {...pageProps} />
       </div>
     </div>
