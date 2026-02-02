@@ -25,7 +25,7 @@ const UserModal = ({
   const title = `${userSelected.firstName} ${userSelected.lastName}`;
   const { date, time } = parseDateTime(userSelected.createdAt);
   const { date: updatedDate, time: updatedTime } = parseDateTime(
-    userSelected.updatedAt
+    userSelected.updatedAt,
   );
 
   return (
@@ -138,7 +138,7 @@ const UserModal = ({
             <ul className="space-y-1">
               <li>Airtime: {user.airtimeTransactions.length}</li>
               <li>Data: {user.dataTransactions.length}</li>
-              <li>Betting: {user.bettingTransactions.length}</li>
+              {/* <li>Betting: {user.bettingTransactions.length}</li> */}
               <li>Exam Pins: {user.examPinTransactions.length}</li>
               <li>Electricity: {user.electricityTransactions.length}</li>
               <li>TV Subscriptions: {user.tvSubscriptionTransaction.length}</li>
@@ -190,7 +190,7 @@ const UserModal = ({
           />
 
           {/* Betting Transactions */}
-          <Section
+          {/* <Section
             title="Betting Transactions"
             items={user.bettingTransactions}
             renderItem={(t) => (
@@ -202,7 +202,7 @@ const UserModal = ({
                 </span>
               </>
             )}
-          />
+          /> */}
 
           {/* Exam Pin Transactions */}
           <Section
@@ -317,8 +317,8 @@ const Section = ({
                     item?.status === "successful"
                       ? "#027112"
                       : item.status === "failed"
-                      ? "#b30404"
-                      : "#173842",
+                        ? "#b30404"
+                        : "#173842",
                 }}
               >
                 {renderItem(item, i)}

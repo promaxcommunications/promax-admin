@@ -9,12 +9,17 @@ import Layout from "@/components/layout";
 export const serviceFilters = [
   "airtime",
   "data",
-  "betting",
+  // "betting",
   "electricity",
   "tv",
   "examPin",
 ] as const;
-export const statusFilters = ["all", "SUCCESS", "FAILED", "PENDING"] as const;
+export const statusFilters = [
+  "all",
+  "successful",
+  "failed",
+  "pending",
+] as const;
 
 const Page = () => {
   const {
@@ -102,7 +107,7 @@ const Page = () => {
                     setPage(1);
                     setStatus(s);
                   }}
-                  className={`px-4 py-2 lowercase font-semibold rounded ${
+                  className={`px-4 py-2 capitalize font-semibold rounded ${
                     status === s ? "bg-[#173842] text-white" : "bg-white"
                   }`}
                 >

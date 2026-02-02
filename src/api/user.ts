@@ -174,7 +174,7 @@ export const useGetTransactions = () => {
     | "electricity"
     | "tv"
     | "examPin";
-  type StatusFilter = "all" | "SUCCESS" | "FAILED" | "PENDING";
+  type StatusFilter = "all" | "successful" | "failed" | "pending";
 
   const [transactions, setTransactions] = useState<BaseTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -344,7 +344,7 @@ export const useGetTransaction = () => {
 
     try {
       const res = await get(
-        `/admin/transaction?id=${transactionId}&type=${type}`
+        `/admin/transaction?id=${transactionId}&type=${type}`,
       );
       const { data } = res;
 
@@ -394,7 +394,7 @@ export const useGetPlans = () => {
   const [data, setData] = useState<Variation[]>([]);
   const [filterSelected, setFilterSelected] = useState(filters[0]);
   const [categorySelected, setCategorySelected] = useState(
-    filters[0].category[0]
+    filters[0].category[0],
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -466,7 +466,7 @@ export const useGetVariations = () => {
   const [data, setData] = useState<Variation[]>([]);
   const [filterSelected, setFilterSelected] = useState(variationfilters[0]);
   const [categorySelected, setCategorySelected] = useState(
-    variationfilters[0].category[0]
+    variationfilters[0].category[0],
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -486,7 +486,7 @@ export const useGetVariations = () => {
         const categoryVariation =
           data.filter(
             (data: any) =>
-              data.provider.toLowerCase() === categorySelected.toLowerCase()
+              data.provider.toLowerCase() === categorySelected.toLowerCase(),
           ) || [];
         setData(categoryVariation);
       } else {
@@ -513,7 +513,7 @@ export const useGetVariations = () => {
 
     const categoryVariation =
       variation.filter(
-        (data) => data.provider?.toLowerCase() === category.toLowerCase()
+        (data) => data.provider?.toLowerCase() === category.toLowerCase(),
       ) || [];
     setData(categoryVariation);
   }, [categorySelected, variation]);

@@ -1,11 +1,13 @@
 const Status = ({ color, value }: { color?: string; value: string }) => {
+  const upperCaseValue = value.toUpperCase();
+
   const statusColor = color
     ? color
-    : value === "COMPLETED" || value === "SUCCESS" || value === "ACTIVE"
-    ? "#21C239"
-    : value === "FAILED" || value === "INACTIVE"
-    ? "#F23737"
-    : "#FFAA00";
+    : ["COMPLETED", "SUCCESS", "ACTIVE", "SUCCESSFUL"].includes(upperCaseValue)
+      ? "#21C239"
+      : ["FAILED", "INACTIVE"].includes(upperCaseValue)
+        ? "#F23737"
+        : "#FFAA00";
 
   return (
     <div className="flex items-center gap-1 flex-[1] justify-center">
