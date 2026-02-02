@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { post } from ".";
+import { get, post } from ".";
 import useUserStore from "@/store/user";
 import { useRouter } from "next/router";
 
@@ -59,6 +59,19 @@ export const useLogin = () => {
     router.replace("/overview");
   };
 
+  const autoLogin = async () => {
+    // await new Promise((res) => setTimeout(res, 3000));
+    const res = await get("/user/me");
+
+    if (res.data) {
+      // console.log(res.data);
+      setUser(res.data);
+    } else {
+      router.push("/auth/login");
+      console.log(res.error);
+    }
+  };
+
   return {
     error,
     setError,
@@ -67,5 +80,6 @@ export const useLogin = () => {
     form,
     setForm,
     disableSubmit,
+    autoLogin,
   };
 };
