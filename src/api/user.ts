@@ -564,3 +564,29 @@ export const useGetMarkup = () => {
     isLoading,
   };
 };
+
+export const useUpdateUser = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateUserBalance = async (onSuccess: () => void) => {
+    setIsLoading(true);
+
+    try {
+      const res = await get(`/admin/update-user-balance`);
+      const { data } = res;
+
+      if (data) {
+        onSuccess();
+      } else {
+        console.log(res.error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    updateUserBalance,
+    isLoading,
+  };
+};
