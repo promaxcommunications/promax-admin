@@ -1,14 +1,14 @@
 import {
   OverviewIcon,
-  // BillIcon,
   DepositIcon,
-  MarkupIcon,
-  // NotificationIcon,
-  // ReferralIcon,
-  // SettingIcon,
   TransactionIcon,
   UserIcon,
   VariationIcon,
+  // BillIcon,
+  // MarkupIcon,
+  // NotificationIcon,
+  // ReferralIcon,
+  // SettingIcon,
 } from "./components/icons";
 
 export const navLinks = [
@@ -42,11 +42,11 @@ export const navLinks = [
   //   icon: BillIcon,
   //   href: "plans",
   // },
-  {
-    title: "Markup Services",
-    icon: MarkupIcon,
-    href: "markup",
-  },
+  // {
+  //   title: "Markup Services",
+  //   icon: MarkupIcon,
+  //   href: "markup",
+  // },
   // {
   //   title: "Bill Payments",
   //   icon: BillIcon,
@@ -104,7 +104,7 @@ export function formatToNaira(amount: number | string) {
 }
 
 export const formatNetworks = (
-  data: Record<string, { serviceID: string; variations: any[] }>
+  data: Record<string, { serviceID: string; variations: any[] }>,
 ) => {
   const formatted: Record<string, any[]> = {};
 
