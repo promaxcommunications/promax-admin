@@ -9,7 +9,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   if (user === null) {
     return (
       <div className="p-10">
-        <ImageEl src="/images/logo1.png" alt="logo" />
+        <ImageEl src="/images/logo1.png" alt="logo" className="!h-[60px]" />
         <div className="h-[85vh] flex justify-center items-center">
           <span className="loader"></span>
         </div>

@@ -10,7 +10,7 @@ const Page = () => {
   return (
     <div className="bg-[#F7F7F7]">
       <div className="fixed top-0 left-0 w-full px-10 py-5">
-        <ImageEl src="/images/logo1.png" alt="logo" />
+        <ImageEl src="/images/logo1.png" alt="logo" className="!h-[60px]" />
       </div>
 
       <div className="flex h-screen items-center justify-center">

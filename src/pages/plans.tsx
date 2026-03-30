@@ -90,7 +90,7 @@ const Page = () => {
               >
                 {provider}
                 {filterSelected.title === "Data" && (
-                  <ImageEl src={`/images/${provider}.png`} alt="provider" />
+                  <ImageEl src={`/images/${provider?.toLowerCase()}.png`} alt="provider" />
                 )}
               </button>
             ))}
@@ -187,7 +187,7 @@ const EditModal = ({
     >
       <div className="px-10 mt-10 w-[600px]">
         <div className="flex items-center gap-4 p-3 bg-white rounded-lg">
-          <ImageEl src={`/images/${editIdSelected}.png`} alt="provider" />
+          <ImageEl src={`/images/${editIdSelected?.toLowerCase()}.png`} alt="provider" />
           <h4 className="font-bold uppercase">{editIdSelected} AWUF</h4>
         </div>
 

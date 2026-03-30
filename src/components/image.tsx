@@ -1,6 +1,6 @@
 import Image, { ImageProps } from "next/image";
 
-const ImageEl = ({ src, alt, ...props }: ImageProps) => {
+const ImageEl = ({ src, alt, className, ...props }: ImageProps) => {
   return (
     <Image
       src={src}
@@ -8,7 +8,7 @@ const ImageEl = ({ src, alt, ...props }: ImageProps) => {
       width={0}
       height={0}
       sizes="100vw"
-      className="w-auto h-auto"
+      className={`w-auto h-auto ${className}`}
       {...props}
     />
   );

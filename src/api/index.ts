@@ -48,7 +48,7 @@ API.interceptors.response.use(
 
     // Check if it's a 401 and not an auth request
     if (
-      error.response?.status === 403 &&
+      error.response?.status === 401 &&
       originalRequest &&
       !originalRequest._retry &&
       !isAuthRequest
@@ -86,27 +86,41 @@ API.interceptors.response.use(
             refreshToken,
           });
 
+          // if (res.data?.data) {
+          //   const { accessToken, refreshToken: newRefreshToken } =
+          //     res.data.data;
+
+          //   if (typeof window !== "undefined") {
+          //     localStorage.setItem(
+          //       "promax_accessToken",
+          //       JSON.stringify(accessToken)
+          //     );
+          //     localStorage.setItem(
+          //       "promax_refreshToken",
+          //       JSON.stringify(newRefreshToken)
+          //     );
+          //   }
+
+          //   if (originalRequest.headers) {
+          //     originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          //   }
+
+          //   return API(originalRequest);
+          // }
           if (res.data?.data) {
-            const { accessToken, refreshToken: newRefreshToken } =
-              res.data.data;
+  const { accessToken, refreshToken: newRefreshToken } = res.data.data;
 
-            if (typeof window !== "undefined") {
-              localStorage.setItem(
-                "promax_accessToken",
-                JSON.stringify(accessToken)
-              );
-              localStorage.setItem(
-                "promax_refreshToken",
-                JSON.stringify(newRefreshToken)
-              );
-            }
+  if (typeof window !== "undefined") {
+    localStorage.setItem("promax_accessToken", accessToken);   // ✅ no JSON.stringify
+    localStorage.setItem("promax_refreshToken", newRefreshToken);
+  }
 
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-            }
+  if (originalRequest.headers) {
+    originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+  }
 
-            return API(originalRequest);
-          }
+  return API(originalRequest);
+}
         } catch (refreshError) {
           await handleLogout();
           return Promise.reject(refreshError);

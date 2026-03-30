@@ -84,7 +84,7 @@ const Page = () => {
               >
                 {provider}
                 {filterSelected.title === "Data" && (
-                  <ImageEl src={`/images/${provider}.png`} alt="provider" />
+                  <ImageEl src={`/images/${provider?.toLowerCase()}.png`} alt="provider" />
                 )}
               </button>
             ))}
