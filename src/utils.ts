@@ -91,6 +91,21 @@ export function parseDateTime(isoString: string) {
   };
 }
 
+export function formatDate(isoString: string) {
+  const date = new Date(isoString);
+
+  return date.toLocaleString("en-US", {
+    weekday: "short",   // Fri
+    year: "numeric",
+    month: "short",     // Mar
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,       // ensures PM/AM
+  });
+}
+
 export function formatToNaira(amount: number | string) {
   amount = typeof amount === "string" ? parseFloat(amount) : amount;
 

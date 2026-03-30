@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Modal from "./modal";
-import { formatToNaira, parseDateTime } from "@/utils";
+import { formatDate, formatToNaira } from "@/utils";
 import { useGetUser } from "@/api/user";
 
 const UserModal = ({
@@ -23,10 +23,6 @@ const UserModal = ({
   if (!userSelected) return null;
 
   const title = `${userSelected.firstName} ${userSelected.lastName}`;
-  const { date, time } = parseDateTime(userSelected.createdAt);
-  const { date: updatedDate, time: updatedTime } = parseDateTime(
-    userSelected.updatedAt,
-  );
 
   return (
     <Modal
@@ -67,11 +63,12 @@ const UserModal = ({
                 {user.isEmailVerified ? "✅ Yes" : "❌ No"}
               </p>
               <p>
-                <span className="font-medium">Joined:</span> {date}, {time}
+                <span className="font-medium">Joined:</span>{" "}
+                {formatDate(userSelected.createdAt)}
               </p>
               <p>
-                <span className="font-medium">Last Updated:</span> {updatedDate}
-                , {updatedTime}
+                <span className="font-medium">Last Updated:</span>{" "}
+                {formatDate(userSelected.updatedAt)}
               </p>
             </div>
           </section>
@@ -166,6 +163,8 @@ const UserModal = ({
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Phone: {t.phoneNumber}</p>
+                <p>Network: {t.network}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
@@ -182,6 +181,8 @@ const UserModal = ({
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Plan: {t.plan}</p>
                 <p>Phone: {t.phoneNumber}</p>
+                <p>Network: {t.network}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
@@ -197,6 +198,7 @@ const UserModal = ({
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Provider: {t.provider}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
@@ -212,6 +214,9 @@ const UserModal = ({
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Exam Type: {t.examType}</p>
+                <p>Pin: {t.pin}</p>
+                <p>Serial Number: {t.serialNumber}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
@@ -227,6 +232,11 @@ const UserModal = ({
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Meter: {t.meterNumber}</p>
+                <p>Meter Type: {t.meterType}</p>
+                <p>Provider: {t.provider}</p>
+                <p>Units: {t.units}</p>
+                <p>Token: {t.token}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
@@ -242,6 +252,9 @@ const UserModal = ({
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Provider: {t.provider}</p>
+                <p>Smart Card Number: {t.smartcardNumber}</p>
+                <p>Package: {t.package}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
@@ -257,6 +270,8 @@ const UserModal = ({
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Type: {t.paymentType}</p>
+                <p>Title: {t.title}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
@@ -272,6 +287,8 @@ const UserModal = ({
               <>
                 <p>Amount: {formatToNaira(t.amount)}</p>
                 <p>Reason: {t.reason}</p>
+                <p>Type: {t.transactionType}</p>
+                <p>Date: {formatDate(t.createdAt)}</p>
                 <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
                   {t.status}
                 </span>
