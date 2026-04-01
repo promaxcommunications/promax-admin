@@ -176,7 +176,11 @@ declare interface User {
   updatedAt: string;
   walletBalance: number;
   referralPoints: number;
-  role: UserRole;
+  role: string;
+
+  isDeleted: boolean;
+  deletedAt: string;
+  deleteReason: string;
 
   // Security (optional in admin view)
   refreshToken?: string;

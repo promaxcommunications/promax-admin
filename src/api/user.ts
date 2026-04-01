@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { get } from ".";
+import { get, post, put } from ".";
 import { formatNetworks } from "@/utils";
 
 type SortKey = "date" | "balance" | "role" | "referralPoints" | "lastActive";
-type FilterKey = "all" | "verified" | "unverified";
+type FilterKey = "all" | "verified" | "unverified" | "deactivated";
 
 export const useGetUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -33,6 +33,7 @@ export const useGetUsers = () => {
     // Verified filter -> backend expects isEmailVerified=true/false
     if (filter === "verified") params.set("isEmailVerified", "true");
     if (filter === "unverified") params.set("isEmailVerified", "false");
+    if (filter === "deactivated") params.set("isActive", "false");
 
     // Sorting: map UI keys to backend sortBy keys
     let sortBy = "dateJoined";
@@ -89,6 +90,7 @@ export const useGetUsers = () => {
 
   return {
     users,
+    setUsers,
     isLoading,
     page,
     totalPages,
@@ -107,7 +109,11 @@ export const useGetUsers = () => {
   };
 };
 
-export const useGetUser = () => {
+export const useGetUser = ({
+  updateLocalUserList,
+}: {
+  updateLocalUserList: React.Dispatch<React.SetStateAction<User[]>>;
+}) => {
   const [user, setUser] = useState(null as null | User);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -126,11 +132,58 @@ export const useGetUser = () => {
     setIsLoading(false);
   };
 
+  const handleDisableUser = async () => {
+    setIsLoading(true);
+
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const res = await post("/admin/toggle-active-user", { userId: user?.id });
+    const { data } = res;
+
+    if (data) {
+      const updatedUser = { ...user!, isActive: !user?.isActive };
+
+      setUser(updatedUser);
+      updateLocalUserList((prev) =>
+        prev.map((data) => (data.id === user?.id ? updatedUser : data)),
+      );
+    } else {
+      console.log(res.error);
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleMakeUserAdmin = async () => {
+    setIsLoading(true);
+
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const res = await post("/admin/toggle-admin-user", { userId: user?.id });
+    const { data } = res;
+
+    if (data) {
+      const role = user?.role === "ADMIN" ? "USER" : "ADMIN";
+      const updatedUser = { ...user!, role };
+
+      setUser(updatedUser);
+      updateLocalUserList((prev) =>
+        prev.map((data) => (data.id === user?.id ? updatedUser : data)),
+      );
+    } else {
+      console.log(res.error);
+    }
+
+    setIsLoading(false);
+  };
+
   return {
     user,
     setUser,
     getUser,
     isLoading,
+    handleDisableUser,
+    handleMakeUserAdmin,
   };
 };
 
@@ -589,4 +642,88 @@ export const useUpdateUser = () => {
     updateUserBalance,
     isLoading,
   };
+};
+
+type CustomerSupport = {
+  id: string;
+  email: string;
+  phoneNo: string;
+};
+export const useCustomerSupport = () => {
+  const [customerSupport, setCustomerSupport] =
+    useState<CustomerSupport | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchCustomerSupport = async () => {
+    setIsLoading(true);
+
+    const res = await get("admin/customer-support");
+
+    if (res.data) {
+      setCustomerSupport(res.data);
+    } else {
+      console.log(res.error);
+    }
+
+    setIsLoading(false);
+  };
+
+  const updateCustomerSupport = async ({
+    email,
+    phoneNo,
+  }: {
+    email: string;
+    phoneNo: string;
+  }) => {
+    setIsLoading(true);
+
+    const res = await put("admin/customer-support", { email, phoneNo });
+
+    if (res.data) {
+      setCustomerSupport(res.data);
+    } else {
+      console.log(res.error);
+    }
+
+    setIsLoading(false);
+  };
+
+  return {
+    customerSupport,
+    fetchCustomerSupport,
+    setCustomerSupport,
+    isLoading,
+    updateCustomerSupport,
+  };
+};
+
+type BroadcastResult = {
+  userCount: number;
+  deviceCount: number;
+  chunkCount: number;
+  ticketsOk: number;
+  ticketsError: number;
+  removedInvalidDevices: number;
+};
+
+export const useBroadcastPush = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const broadcastPush = async (
+    title: string,
+    message: string,
+  ): Promise<BroadcastResult | null> => {
+    setIsLoading(true);
+    const res = await post<BroadcastResult>("/admin/broadcast-push", {
+      title,
+      message,
+    });
+    setIsLoading(false);
+
+    if (res.data) return res.data;
+    console.log(res.error);
+    return null;
+  };
+
+  return { broadcastPush, isLoading };
 };

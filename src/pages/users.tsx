@@ -6,11 +6,12 @@ import UserModal from "@/components/userModal";
 import { formatToNaira, parseDateTime } from "@/utils";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
-const filters = ["all", "verified", "unverified"] as const;
+const filters = ["all", "verified", "unverified", "deactivated"] as const;
 
 const Page = () => {
   const {
     users,
+    setUsers,
     isLoading,
     page,
     totalPages,
@@ -137,6 +138,7 @@ const Page = () => {
             <span className="flex-[1] font-bold text-center">ROLE</span>
             <span className="flex-[1] font-bold text-center">BALANCE</span>
             <span className="flex-[1] font-bold text-center">STATUS</span>
+            <span className="flex-[1] font-bold text-center">EMAIL</span>
             <span className="flex-[1] font-bold text-center">DATE</span>
             <span className="flex-[1]"></span>
           </div>
@@ -195,6 +197,7 @@ const Page = () => {
         <UserModal
           userSelected={userSelected}
           setUserSelected={setUserSelected}
+          setUsers={setUsers}
         />
       </div>
     </Layout>
@@ -214,12 +217,14 @@ const ListBox = ({
     firstName,
     lastName,
     isEmailVerified,
+    isActive,
     walletBalance,
     phoneNumber,
     role,
   } = data;
 
   const color = isEmailVerified ? "#21C239" : "#F23737";
+  const statusColor = isActive ? "#21C239" : "#F23737";
   // "#FFAA00";
   const { date, time } = parseDateTime(createdAt);
 
@@ -237,6 +242,7 @@ const ListBox = ({
       <span className="flex-[1] text-center">
         {formatToNaira(walletBalance)}
       </span>
+      <Status value={isActive ? "Active" : "Deactivated"} color={statusColor} />
       <Status
         value={isEmailVerified ? "Verified" : "Unverified"}
         color={color}

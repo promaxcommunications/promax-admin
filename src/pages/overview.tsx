@@ -73,12 +73,12 @@ const Page = () => {
 
             <Link
               href="/transaction"
-              className="mt-8 py-3 cursor-pointer w-full rounded flex items-center justify-center gap-3 bg-[#FEEBEB] text-[#F23737] text-sm font-bold"
+              className="mt-8 py-3 cursor-pointer w-full rounded flex items-center justify-center gap-3 bg-[#E9F9EB] text-[#32CD32] text-sm font-bold"
             >
-              View all <ArrowRightIcon color="#F23737" />
+              View all <ArrowRightIcon color="#32CD32" />
             </Link>
           </article>
-          <article className="pt-9 pb-4 px-4 bg-white rounded flex-1">
+          {/* <article className="pt-9 pb-4 px-4 bg-white rounded flex-1">
             <div className="flex gap-4">
               <TransactionIconAlt />
               <div>
@@ -97,7 +97,7 @@ const Page = () => {
             >
               View all <ArrowRightIcon color="#32CD32" />
             </Link>
-          </article>
+          </article> */}
 
           {/* <article className="pt-9 pb-4 px-4 bg-white rounded flex-1">
           <div className="flex gap-4">

@@ -5,7 +5,7 @@ import {
   UserIcon,
   VariationIcon,
   // BillIcon,
-  // MarkupIcon,
+  MarkupIcon,
   // NotificationIcon,
   // ReferralIcon,
   // SettingIcon,
@@ -36,6 +36,11 @@ export const navLinks = [
     title: "Variation Services",
     icon: VariationIcon,
     href: "variation",
+  },
+  {
+    title: "Customer Suppport",
+    icon: MarkupIcon,
+    href: "customer",
   },
   // {
   //   title: "Bundle Plans",
@@ -95,14 +100,14 @@ export function formatDate(isoString: string) {
   const date = new Date(isoString);
 
   return date.toLocaleString("en-US", {
-    weekday: "short",   // Fri
+    weekday: "short", // Fri
     year: "numeric",
-    month: "short",     // Mar
+    month: "short", // Mar
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: true,       // ensures PM/AM
+    hour12: true, // ensures PM/AM
   });
 }
 

@@ -2,21 +2,31 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Modal from "./modal";
 import { formatDate, formatToNaira } from "@/utils";
 import { useGetUser } from "@/api/user";
+import useUserStore from "@/store/user";
 
 const UserModal = ({
   userSelected,
   setUserSelected,
+  setUsers,
 }: {
   userSelected: User | null;
   setUserSelected: Dispatch<SetStateAction<User | null>>;
+  setUsers: Dispatch<SetStateAction<User[]>>;
 }) => {
-  const { getUser, isLoading, user, setUser } = useGetUser();
+  const { user: loggedInUser } = useUserStore();
+  const {
+    getUser,
+    isLoading,
+    user,
+    setUser,
+    handleDisableUser,
+    handleMakeUserAdmin,
+  } = useGetUser({ updateLocalUserList: setUsers });
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
 
   useEffect(() => {
     if (!userSelected) return;
-
     getUser(userSelected?.id);
-
     return () => setUser(null);
   }, [userSelected]);
 
@@ -24,15 +34,43 @@ const UserModal = ({
 
   const title = `${userSelected.firstName} ${userSelected.lastName}`;
 
+  const handleConfirm = async () => {
+    if (confirmAction === "deactivate") await handleDisableUser();
+    else if (confirmAction === "admin") await handleMakeUserAdmin();
+    setConfirmAction(null);
+  };
+
+  const confirmMessage =
+    confirmAction === "deactivate"
+      ? user
+        ? user.isActive
+          ? "Are you sure you want to deactivate this user's account?"
+          : "Are you sure you want to activate this user's account?"
+        : ""
+      : confirmAction === "admin"
+        ? user
+          ? user.role === "USER"
+            ? "Are you sure you want to make this user an admin?"
+            : "Are you sure you want to remove this user as admin?"
+          : ""
+        : "";
+
   return (
     <Modal
       openModal={!!userSelected}
       closeModal={() => setUserSelected(null)}
       title={title}
     >
-      {isLoading ? (
+      <ConfirmModal
+        action={confirmAction}
+        message={confirmMessage}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmAction(null)}
+        isLoading={isLoading}
+      />
+      {isLoading && !confirmAction ? (
         <div className="h-[80vh] max-h-[500px] grid place-content-center w-[600px]">
-          <span className="loader"></span>
+          <span className="loader" />
         </div>
       ) : !user ? (
         <div className="h-[80vh] max-h-[500px] grid place-content-center w-[600px]">
@@ -42,6 +80,30 @@ const UserModal = ({
         </div>
       ) : (
         <div className="px-10 mt-6 w-[600px] space-y-6 pb-20">
+          {/* Action Buttons */}
+          {user.role !== "SUPER_ADMIN" && (
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmAction("deactivate")}
+                className={`py-2 px-4 rounded-lg text-white font-medium transition-colors cursor-pointer ${
+                  user.isActive
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-green-600 hover:bg-green-700"
+                }`}
+              >
+                {user.isActive ? "Deactivate Account" : "Activate Account"}
+              </button>
+              {loggedInUser?.role === "SUPER_ADMIN" && (
+                <button
+                  onClick={() => setConfirmAction("admin")}
+                  className="py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors cursor-pointer"
+                >
+                  {user.role === "USER" ? "Make Admin" : "Remove Admin"}
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Profile Info */}
           <h3 className="font-semibold text-lg mb-0">Profile</h3>
           <section className="bg-[#173842] text-white rounded-lg p-4 shadow">
@@ -59,6 +121,10 @@ const UserModal = ({
                 <span className="font-medium">Role:</span> {user.role}
               </p>
               <p>
+                <span className="font-medium">Status:</span>{" "}
+                {user.isActive ? "✅ Active" : "❌ Deactivated"}
+              </p>
+              <p>
                 <span className="font-medium">Email Verified:</span>{" "}
                 {user.isEmailVerified ? "✅ Yes" : "❌ No"}
               </p>
@@ -72,6 +138,29 @@ const UserModal = ({
               </p>
             </div>
           </section>
+
+          {/* Delete Info */}
+          {userSelected.deletedAt && (
+            <>
+              <h3 className="font-semibold text-lg mb-0">Delete Info</h3>
+              <section className="bg-red-800 text-white rounded-lg p-4 shadow">
+                <div className="space-y-3">
+                  <p>
+                    <span className="font-medium">is Account Deleted:</span>
+                    {user.isDeleted ? "✅ Yes" : "❌ No"}
+                  </p>
+                  <p>
+                    <span className="font-medium">Last deleted time:</span>{" "}
+                    {formatDate(userSelected.deletedAt)}
+                  </p>
+                  <p>
+                    <span className="font-medium">Reason:</span>{" "}
+                    {user.deleteReason}
+                  </p>
+                </div>
+              </section>
+            </>
+          )}
 
           {/* Financial Info */}
           <h3 className="font-semibold text-lg mb-0">Financial</h3>
@@ -129,13 +218,12 @@ const UserModal = ({
             </ul>
           </section>
 
-          {/* Transactions (show counts only for quick summary) */}
+          {/* Transactions */}
           <h3 className="font-semibold text-lg mb-0">Transactions</h3>
           <section className="bg-[#173842] text-white rounded-lg p-4 shadow">
             <ul className="space-y-1">
               <li>Airtime: {user.airtimeTransactions.length}</li>
               <li>Data: {user.dataTransactions.length}</li>
-              {/* <li>Betting: {user.bettingTransactions.length}</li> */}
               <li>Exam Pins: {user.examPinTransactions.length}</li>
               <li>Electricity: {user.electricityTransactions.length}</li>
               <li>TV Subscriptions: {user.tvSubscriptionTransaction.length}</li>
@@ -189,22 +277,6 @@ const UserModal = ({
               </>
             )}
           />
-
-          {/* Betting Transactions */}
-          {/* <Section
-            title="Betting Transactions"
-            items={user.bettingTransactions}
-            renderItem={(t) => (
-              <>
-                <p>Amount: {formatToNaira(t.amount)}</p>
-                <p>Provider: {t.provider}</p>
-                <p>Date: {formatDate(t.createdAt)}</p>
-                <span className="absolute top-1 right-1 bg-gray-200 text-black px-2 py-1 rounded-md text-xs">
-                  {t.status}
-                </span>
-              </>
-            )}
-          /> */}
 
           {/* Exam Pin Transactions */}
           <Section
@@ -262,7 +334,7 @@ const UserModal = ({
             )}
           />
 
-          {/* Payments */}
+          {/* Deposit History */}
           <Section
             title="Deposit History"
             items={user.paymentHistory}
@@ -352,6 +424,54 @@ const Section = ({
           )}
         </>
       )}
+    </div>
+  );
+};
+
+type ConfirmAction = "deactivate" | "admin" | null;
+
+const ConfirmModal = ({
+  action,
+  message,
+  onConfirm,
+  onCancel,
+  isLoading,
+}: {
+  action: ConfirmAction;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  isLoading: boolean;
+}) => {
+  if (!action) return null;
+
+  const isDeactivate = action === "deactivate";
+
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
+      <div className="relative bg-white text-black rounded-xl p-10 w-[400px] shadow-xl space-y-4">
+        <p className="text-lg text-center">{message}</p>
+        <div className="flex gap-3 mt-10">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-2 rounded-lg border border-gray-500 hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className={`flex-1 py-2 rounded-lg text-white font-medium transition-colors cursor-pointer disabled:opacity-60 ${
+              isDeactivate
+                ? "bg-red-600 hover:bg-red-700"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+          >
+            {isLoading ? <span className="loader-small" /> : "Confirm"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
