@@ -26,6 +26,8 @@ export default function App({ Component, pageProps }: AppProps) {
     <div className={`${lato.className} bg-[#F7F7F7] flex`}>
       <Head>
         <title>Promax Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="icon" href="/images/favicon.png" />
       </Head>
 
       <div className="w-full">
